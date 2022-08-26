@@ -15,6 +15,7 @@ This provides a [build hook](https://hatch.pypa.io/latest/config/build/#build-ho
 - [Configuration](#configuration)
   - [File](#file)
   - [Code](#code)
+  - [Template](#template)
 - [Conditional execution](#conditional-execution)
 - [License](#license)
 
@@ -52,21 +53,32 @@ You can define the code itself with the `code` option:
 ```toml
 [tool.hatch.build.targets.wheel.hooks.autorun]
 code = """
-import coverage
+print('Starting coverage collection')
 coverage.process_startup()
 """
 ```
 
+### Template
+
+The current implementation uses a `.pth` file to execute the code. As a result, any required imports must be defined there on one line rather than in the code itself.
+
+You can set the `.pth` file template with the `template` option, which will be formatted with a `code` variable representing the `code` option or the contents of the file defined by the `file` option. The following shows the default template:
+
+```toml
+[tool.hatch.build.targets.wheel.hooks.autorun]
+template = "import os, sys;exec({code!r})"
+```
+
 ## Conditional execution
 
-Sometimes you'll only want builds to induce auto-run behavior when installed under certain circumstances, like for tests. In such cases, set the [`enable-by-default`](https://hatch.pypa.io/latest/config/build/#conditional-execution) option to `false`:
+Sometimes you'll only want builds to induce auto-run behavior when installed under certain circumstances, like for tests. In such cases, set the `enable-by-default` [option](https://hatch.pypa.io/latest/config/build/#conditional-execution) to `false`:
 
 ```toml
 [tool.hatch.build.targets.wheel.hooks.autorun]
 enable-by-default = false
 ```
 
-Then when the desired build conditions are met, set the [`HATCH_BUILD_HOOK_ENABLE_AUTORUN`](https://hatch.pypa.io/latest/config/build/#environment-variables) environment variable to `true` or `1`.
+Then when the desired build conditions are met, set the `HATCH_BUILD_HOOK_ENABLE_AUTORUN` [environment variable](https://hatch.pypa.io/latest/config/build/#environment-variables) to `true` or `1`.
 
 ## License
 

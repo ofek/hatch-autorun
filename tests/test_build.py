@@ -9,13 +9,8 @@ import pytest
 from .utils import build_project
 
 CODE = """\
-try:
-    import coverage
-# coverage throws OSError when $PWD does not exist
-except (ImportError, OSError):
-    pass
-else:
-    coverage.process_startup()
+print('Starting coverage collection')
+coverage.process_startup()
 """
 
 
@@ -83,7 +78,7 @@ def test_file(new_project):
 
     pth_file = extraction_directory / 'hatch_autorun_my_app.pth'
     assert pth_file.is_file()
-    assert pth_file.read_text() == f'exec({CODE!r})'
+    assert pth_file.read_text() == f'import os, sys;exec({CODE!r})'
 
 
 def test_code(new_project):
@@ -117,4 +112,39 @@ def test_code(new_project):
 
     pth_file = extraction_directory / 'hatch_autorun_my_app.pth'
     assert pth_file.is_file()
-    assert pth_file.read_text() == f'exec({CODE!r})'
+    assert pth_file.read_text() == f'import os, sys;exec({CODE!r})'
+
+
+def test_file_and_template(new_project):
+    project_file = new_project / 'pyproject.toml'
+    contents = project_file.read_text(encoding='utf-8')
+    contents += '\nfile = "code.emded"'
+    contents += '\ntemplate = "import coverage;exec({code!r})"'
+    project_file.write_text(contents, encoding='utf-8')
+
+    package_main = new_project / 'code.emded'
+    package_main.write_text(CODE, encoding='utf-8')
+
+    build_project()
+
+    build_dir = new_project / 'dist'
+    assert build_dir.is_dir()
+
+    artifacts = list(build_dir.iterdir())
+    assert len(artifacts) == 1
+    wheel_file = artifacts[0]
+
+    assert wheel_file.name == f'my_app-1.2.3-py{sys.version_info[0]}-none-any.whl'
+
+    extraction_directory = new_project.parent / '_archive'
+    extraction_directory.mkdir()
+
+    with zipfile.ZipFile(str(wheel_file), 'r') as zip_archive:
+        zip_archive.extractall(str(extraction_directory))
+
+    root_paths = list(extraction_directory.iterdir())
+    assert len(root_paths) == 3
+
+    pth_file = extraction_directory / 'hatch_autorun_my_app.pth'
+    assert pth_file.is_file()
+    assert pth_file.read_text() == f'import coverage;exec({CODE!r})'

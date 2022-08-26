@@ -17,6 +17,7 @@ class AutoRunBuildHook(BuildHookInterface):
 
         self.__config_file = None
         self.__config_code = None
+        self.__config_template = None
         self.__temp_dir = None
 
     @property
@@ -42,6 +43,17 @@ class AutoRunBuildHook(BuildHookInterface):
         return self.__config_code
 
     @property
+    def config_template(self):
+        if self.__config_template is None:
+            template = self.config.get('template', 'import os, sys;exec({code!r})')
+            if not isinstance(template, str):
+                raise TypeError(f'Option `template` for build hook `{self.PLUGIN_NAME}` must be a string')
+
+            self.__config_template = template
+
+        return self.__config_template
+
+    @property
     def temp_dir(self):
         if self.__temp_dir is None:
             self.__temp_dir = os.path.realpath(tempfile.mkdtemp())
@@ -65,7 +77,7 @@ class AutoRunBuildHook(BuildHookInterface):
         file_name = f'hatch_{self.PLUGIN_NAME}_{project_name}.pth'
         pth_file = os.path.join(self.temp_dir, file_name)
         with open(pth_file, 'w', encoding='utf-8') as f:
-            f.write(f'exec({code!r})')
+            f.write(self.config_template.format(code=code))
 
         if version == 'editable':  # no cov
             build_data['force_include_editable'][pth_file] = file_name
