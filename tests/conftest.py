@@ -1,14 +1,26 @@
 # SPDX-FileCopyrightText: 2022-present Ofek Lev <oss@ofek.dev>
 #
 # SPDX-License-Identifier: MIT
+import errno
 import os
 import shutil
 import sys
+import stat
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Generator
 
 import pytest
+
+
+def handle_remove_readonly(func, path, exc):  # no cov
+    # TODO: remove when we drop Python 3.7
+    # PermissionError: [WinError 5] Access is denied: '...\\.git\\...'
+    if func in (os.rmdir, os.remove, os.unlink) and exc[1].errno == errno.EACCES:
+        os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+        func(path)
+    else:
+        raise
 
 
 @pytest.fixture(scope='session')
@@ -18,6 +30,8 @@ def plugin_dir() -> Generator[Path, None, None]:
         shutil.copytree(Path.cwd(), directory)
 
         yield directory.resolve()
+
+        shutil.rmtree(directory, ignore_errors=False, onerror=handle_remove_readonly)
 
 
 @pytest.fixture
