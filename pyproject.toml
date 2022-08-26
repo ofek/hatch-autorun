@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
@@ -47,7 +47,7 @@ Source = "https://github.com/ofek/hatch-autorun"
 autorun = "hatch_autorun.hooks"
 
 [tool.hatch.version]
-path = "src/hatch_autorun/__about__.py"
+source = "vcs"
 
 [tool.mypy]
 disallow_untyped_defs = false
@@ -75,9 +75,6 @@ use_parentheses = true
 
 [tool.coverage.run]
 branch = true
-omit = [
-  "src/hatch_autorun/__about__.py",
-]
 
 [tool.coverage.report]
 exclude_lines = [
