@@ -1,0 +1,87 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hatch-autorun"
+dynamic = ["version"]
+description = "Hatch build hook plugin to inject code that will automatically run"
+readme = "README.md"
+requires-python = ">=3.7"
+license = "MIT"
+keywords = [
+  "autorun",
+  "build",
+  "hatch",
+  "plugin",
+  "pth",
+]
+authors = [
+  { name = "Ofek Lev", email = "oss@ofek.dev" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Framework :: Hatch",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+  "Topic :: Software Development :: Build Tools",
+]
+dependencies = [
+  "hatchling>=1.6.0",
+]
+
+[project.urls]
+Funding = "https://github.com/sponsors/ofek"
+History = "https://github.com/ofek/hatch-autorun/blob/master/HISTORY.md"
+Issues = "https://github.com/ofek/hatch-autorun/issues"
+Source = "https://github.com/ofek/hatch-autorun"
+
+[project.entry-points.hatch]
+autorun = "hatch_autorun.hooks"
+
+[tool.hatch.version]
+path = "src/hatch_autorun/__about__.py"
+
+[tool.mypy]
+disallow_untyped_defs = false
+follow_imports = "normal"
+ignore_missing_imports = true
+pretty = true
+show_column_numbers = true
+warn_no_return = false
+warn_unused_ignores = true
+
+[tool.black]
+include = '\.pyi?$'
+line-length = 120
+skip-string-normalization = true
+target-version = ["py37"]
+
+[tool.isort]
+default_section = "THIRDPARTY"
+force_grid_wrap = 0
+include_trailing_comma = true
+known_first_party = ["hatch_autorun"]
+line_length = 120
+multi_line_output = 3
+use_parentheses = true
+
+[tool.coverage.run]
+branch = true
+omit = [
+  "src/hatch_autorun/__about__.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
