@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import os
 import tempfile
-from functools import cached_property
 
 from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 
@@ -18,26 +17,36 @@ class AutoRunBuildHook(BuildHookInterface):
 
         self.__config_file = None
         self.__config_code = None
+        self.__temp_dir = None
 
-    @cached_property
+    @property
     def config_file(self):
-        file = self.config.get('file', '')
-        if not isinstance(file, str):
-            raise TypeError(f'Option `file` for build hook `{self.PLUGIN_NAME}` must be a string')
+        if self.__config_file is None:
+            file = self.config.get('file', '')
+            if not isinstance(file, str):
+                raise TypeError(f'Option `file` for build hook `{self.PLUGIN_NAME}` must be a string')
 
-        return file
+            self.__config_file = file
 
-    @cached_property
+        return self.__config_file
+
+    @property
     def config_code(self):
-        code = self.config.get('code', '')
-        if not isinstance(code, str):
-            raise TypeError(f'Option `code` for build hook `{self.PLUGIN_NAME}` must be a string')
+        if self.__config_code is None:
+            code = self.config.get('code', '')
+            if not isinstance(code, str):
+                raise TypeError(f'Option `code` for build hook `{self.PLUGIN_NAME}` must be a string')
 
-        return code
+            self.__config_code = code
 
-    @cached_property
+        return self.__config_code
+
+    @property
     def temp_dir(self):
-        return os.path.realpath(tempfile.mkdtemp())
+        if self.__temp_dir is None:
+            self.__temp_dir = os.path.realpath(tempfile.mkdtemp())
+
+        return self.__temp_dir
 
     def initialize(self, version, build_data):
         if self.target_name != 'wheel':

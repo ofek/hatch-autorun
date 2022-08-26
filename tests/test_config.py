@@ -12,7 +12,7 @@ class TestFile:
         build_dir = new_project / 'dist'
         build_hook = AutoRunBuildHook(str(new_project), config, None, None, str(build_dir), 'wheel')
 
-        assert build_hook.config_file == 'foo'
+        assert build_hook.config_file == build_hook.config_file == 'foo'
 
     def test_not_string(self, new_project):
         config = {'file': 9000}
@@ -29,7 +29,7 @@ class TestCode:
         build_dir = new_project / 'dist'
         build_hook = AutoRunBuildHook(str(new_project), config, None, None, str(build_dir), 'wheel')
 
-        assert build_hook.config_code == 'foo'
+        assert build_hook.config_code == build_hook.config_code == 'foo'
 
     def test_not_string(self, new_project):
         config = {'code': 9000}
