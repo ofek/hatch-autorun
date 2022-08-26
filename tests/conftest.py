@@ -15,7 +15,7 @@ import pytest
 def plugin_dir() -> Generator[Path, None, None]:
     with TemporaryDirectory() as d:
         directory = Path(d, 'plugin')
-        shutil.copytree(Path.cwd(), directory, ignore=shutil.ignore_patterns('.git'))
+        shutil.copytree(Path.cwd(), directory)
 
         yield directory.resolve()
 
