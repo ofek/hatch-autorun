@@ -67,7 +67,10 @@ class AutoRunBuildHook(BuildHookInterface):
         with open(pth_file, 'w', encoding='utf-8') as f:
             f.write(f'exec({code!r})')
 
-        build_data['force_include'][pth_file] = file_name
+        if version == 'editable':  # no cov
+            build_data['force_include_editable'][pth_file] = file_name
+        else:
+            build_data['force_include'][pth_file] = file_name
 
     def finalize(self, version, build_data, artifact_path):
         import shutil
