@@ -59,14 +59,14 @@ coverage.process_startup()
 
 ## Conditional execution
 
-Sometimes you'll only want builds to induce auto-run behavior when installed under certain circumstances, like for tests. In such cases, set [`enable-by-default`](https://hatch.pypa.io/latest/config/build/#conditional-execution) to `false`:
+Sometimes you'll only want builds to induce auto-run behavior when installed under certain circumstances, like for tests. In such cases, set the [`enable-by-default`](https://hatch.pypa.io/latest/config/build/#conditional-execution) option to `false`:
 
 ```toml
 [tool.hatch.build.targets.wheel.hooks.autorun]
 enable-by-default = false
 ```
 
-Then when the desired conditions are met, set the [`HATCH_BUILD_HOOK_ENABLE_AUTORUN`](https://hatch.pypa.io/latest/config/build/#environment-variables) environment variable to `true` or `1`.
+Then when the desired build conditions are met, set the [`HATCH_BUILD_HOOK_ENABLE_AUTORUN`](https://hatch.pypa.io/latest/config/build/#environment-variables) environment variable to `true` or `1`.
 
 ## License
 
