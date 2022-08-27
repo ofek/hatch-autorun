@@ -53,16 +53,14 @@ You can define the code itself with the `code` option:
 ```toml
 [tool.hatch.build.targets.wheel.hooks.autorun]
 code = """
-print('Starting coverage collection')
+import coverage
 coverage.process_startup()
 """
 ```
 
 ### Template
 
-The current implementation uses a `.pth` file to execute the code. As a result, any required imports must be defined there on one line rather than in the code itself.
-
-You can set the `.pth` file template with the `template` option, which will be formatted with a `code` variable representing the `code` option or the contents of the file defined by the `file` option. The following shows the default template:
+The current implementation uses a `.pth` file to execute the code. You can set the `.pth` file template with the `template` option, which will be formatted with a `code` variable representing the `code` option or the contents of the file defined by the `file` option. The following shows the default template:
 
 ```toml
 [tool.hatch.build.targets.wheel.hooks.autorun]

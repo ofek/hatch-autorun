@@ -9,8 +9,13 @@ import pytest
 from .utils import build_project
 
 CODE = """\
-print('Starting coverage collection')
-coverage.process_startup()
+try:
+    import coverage
+# coverage throws OSError when $PWD does not exist
+except (ImportError, OSError):
+    pass
+else:
+    coverage.process_startup()
 """
 
 
@@ -119,7 +124,7 @@ def test_file_and_template(new_project):
     project_file = new_project / 'pyproject.toml'
     contents = project_file.read_text(encoding='utf-8')
     contents += '\nfile = "code.emded"'
-    contents += '\ntemplate = "import coverage;exec({code!r})"'
+    contents += '\ntemplate = "import foo;exec({code!r})"'
     project_file.write_text(contents, encoding='utf-8')
 
     package_main = new_project / 'code.emded'
@@ -147,4 +152,4 @@ def test_file_and_template(new_project):
 
     pth_file = extraction_directory / 'hatch_autorun_my_app.pth'
     assert pth_file.is_file()
-    assert pth_file.read_text() == f'import coverage;exec({CODE!r})'
+    assert pth_file.read_text() == f'import foo;exec({CODE!r})'
