@@ -68,7 +68,7 @@ class AutoRunBuildHook(BuildHookInterface):
         elif self.config_file and self.config_code:
             raise ValueError(f'The build hook `{self.PLUGIN_NAME}` options `file` and `code` are mutually exclusive')
         elif self.config_file:
-            with open(os.path.normpath(os.path.join(self.root, self.config_file)), 'r', encoding='utf-8') as f:
+            with open(os.path.normpath(os.path.join(self.root, self.config_file)), encoding='utf-8') as f:
                 code = f.read()
         else:
             code = self.config_code
